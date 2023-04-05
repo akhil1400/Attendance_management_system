@@ -22,6 +22,7 @@ class _LogsPageState extends State<LogsPage> {
   TextEditingController _controller1 = TextEditingController();
   Future<Null> getSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
     setState(() {
       Util.startTime = prefs.getStringList("string23")!;
       Util.EndTime = prefs.getStringList("string145")!;

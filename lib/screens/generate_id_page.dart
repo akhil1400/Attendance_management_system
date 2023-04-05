@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:project/screens/login_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../utils/util.dart';
 
 class GenerateIdPage extends StatefulWidget {
   const GenerateIdPage({Key? key}) : super(key: key);
@@ -11,10 +15,67 @@ class GenerateIdPage extends StatefulWidget {
 
 class _JoiningPageState extends State<GenerateIdPage> {
 
+  List<String> attachments = [];
+  bool isHTML = false;
+
+  final _recipientController = TextEditingController(
+    text: 'akhilteli55@gmail.com',
+  );
+
+  final _subjectController = TextEditingController(text: 'The subject');
+
+  final _bodyController = TextEditingController(
+    text: 'Mail body.',
+  );
+  var id=['EIS0123','EIS0124','EIS0125','EIS0127'];
   var name=['Ramesh','Rahul','Rohit','Raju'];
   var des=['software developer','software developer','Doctor','Doctor'];
   var email=['ramesh@gmail.com','rahul@gmail.com','rohit@gmail.com','raju@gamil.com'];
   var color=[Colors.orange,Colors.grey,Colors.black,Colors.green];
+
+  Future<void> send() async {
+    final Email email = Email(
+      body: _bodyController.text,
+      subject: _subjectController.text,
+      recipients: [_recipientController.text],
+      attachmentPaths: attachments,
+      isHTML: isHTML,
+    );
+
+    String platformResponse;
+
+    try {
+      await FlutterEmailSender.send(email);
+      platformResponse = 'success';
+    } catch (error) {
+      print(error);
+      platformResponse = error.toString();
+    }
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(platformResponse),
+      ),
+    );
+  }
+
+
+  Future<Null> getSharedPrefs() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      Util.name=prefs.getStringList("stringt")!;
+      Util.email = prefs.getStringList("stringta")!;
+    });
+  }
+
+  @override
+  initState() {
+    getSharedPrefs();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,22 +231,13 @@ class _JoiningPageState extends State<GenerateIdPage> {
                     );
                     showDialog(context: context, builder: (BuildContext context) => errorDialog);}
               ),
-              // Icon(Icons.notifications_none,color:Colors.white),
-              // SizedBox(width:10.w,),
-              // CircleAvatar(
-              //   backgroundColor: Colors.white,
-              //   radius:20,
-              //   child: Image.asset('assets/user.jpg',width:20.w,),
-              // ),
-              // SizedBox(width:10.w,),
-              // Icon(Icons.settings,color:Colors.white),
             ],
           ),
           centerTitle:true,
           backgroundColor:Colors.blue),
       body:Padding(padding:EdgeInsets.only(top:20.h),
         child:ListView.separated(
-          itemCount:name.length,
+          itemCount:Util.name.length ?? 0,
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
               leading:CircleAvatar(
@@ -202,7 +254,7 @@ class _JoiningPageState extends State<GenerateIdPage> {
                       crossAxisAlignment:CrossAxisAlignment.start,
                       children:[
                         Text(
-                          name[index],
+                          '${Util.name[index]}',
                           style: TextStyle(
                             fontWeight:FontWeight.bold,
                             fontFamily: 'Gilroy',
@@ -210,16 +262,24 @@ class _JoiningPageState extends State<GenerateIdPage> {
                             fontSize: 20.sp,
                           ),
                         ),
+                        // Text(
+                        //   id[index],
+                        //   style: TextStyle(
+                        //     fontFamily: 'Gilroy',
+                        //     color: Colors.black,
+                        //     fontSize: 15.sp,
+                        //   ),
+                        // ),
+                        // Text(
+                        //   des[index],
+                        //   style: TextStyle(
+                        //     fontFamily: 'Gilroy',
+                        //     color: Colors.black,
+                        //     fontSize: 15.sp,
+                        //   ),
+                        // ),
                         Text(
-                          des[index],
-                          style: TextStyle(
-                            fontFamily: 'Gilroy',
-                            color: Colors.black,
-                            fontSize: 15.sp,
-                          ),
-                        ),
-                        Text(
-                          email[index],
+                          '${Util.email[index]}',
                           style: TextStyle(
                             fontFamily: 'Gilroy',
                             color: Colors.black,
@@ -228,261 +288,17 @@ class _JoiningPageState extends State<GenerateIdPage> {
                         ),
                       ],
                     ),
-                    Row(
-                      children:[
-                        IconButton(
-                          color: Colors.red,
-                          onPressed: () {
 
-                          },
-                          icon: Icon(Icons.pending_actions),
-                        ),
                         IconButton(
                           color: Colors.green,
                           onPressed: () {
-                            Dialog errorDialog = Dialog(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0.0)), //this right here
-                              child:Container(
-                                height: 300.0,
-                                width: 400.0,
-                                color:Colors.white,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment:CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding:  EdgeInsets.only(left:20.w,top:20.h),
-                                      child:Row(
-                                        children:[
-                                          SizedBox(width:2.w,),
-                                          Text('Employee Information',style: TextStyle(
-                                            fontWeight:FontWeight.bold,
-                                            fontFamily: 'Gilroy',
-                                            color: Colors.black,
-                                            fontSize: 15.sp,
-                                          ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding:  EdgeInsets.only(left:10.w,top:20.h),
-                                      child:Row(
-                                        mainAxisAlignment:MainAxisAlignment.spaceAround,
-                                        children:[
-                                          Column(
-                                            crossAxisAlignment:CrossAxisAlignment.start,
-                                            children:[
-                                              Text('Name',style: TextStyle(
-                                                fontWeight:FontWeight.bold,
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.black,
-                                                fontSize: 15.sp,
-                                              ),
-                                              ),
-                                              Text('Suresh Kumar',style: TextStyle(
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.black,
-                                                fontSize: 12.sp,
-                                              ),
-                                              ),
-                                            ],
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:CrossAxisAlignment.start,
-                                            children:[
-                                              Text('Date of Joining',style: TextStyle(
-                                                fontWeight:FontWeight.bold,
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.black,
-                                                fontSize: 15.sp,
-                                              ),
-                                              ),
-                                              Text('07-02-2023',style: TextStyle(
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.black,
-                                                fontSize: 12.sp,
-                                              ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding:  EdgeInsets.only(left:10.w,top:20.h),
-                                      child:Row(
-                                        mainAxisAlignment:MainAxisAlignment.spaceAround,
-                                        children:[
-                                          Column(
-                                            crossAxisAlignment:CrossAxisAlignment.start,
-                                            children:[
-                                              Text('Email ID',style: TextStyle(
-                                                fontWeight:FontWeight.bold,
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.black,
-                                                fontSize: 15.sp,
-                                              ),
-                                              ),
-                                              Text('Harseh@gmail.com',style: TextStyle(
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.black,
-                                                fontSize: 12.sp,
-                                              ),
-                                              ),
-                                            ],
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:CrossAxisAlignment.start,
-                                            children:[
-                                              Text('Phone Number',style: TextStyle(
-                                                fontWeight:FontWeight.bold,
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.black,
-                                                fontSize: 15.sp,
-                                              ),
-                                              ),
-                                              Text('934567813',style: TextStyle(
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.black,
-                                                fontSize: 12.sp,
-                                              ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding:  EdgeInsets.only(left:10.w,top:20.h),
-                                      child:Row(
-                                        mainAxisAlignment:MainAxisAlignment.spaceAround,
-                                        children:[
-                                          Column(
-                                            crossAxisAlignment:CrossAxisAlignment.start,
-                                            children:[
-                                              Text('Experience',style: TextStyle(
-                                                fontWeight:FontWeight.bold,
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.black,
-                                                fontSize: 15.sp,
-                                              ),
-                                              ),
-                                              Text('Harseh@gmail.com',style: TextStyle(
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.black,
-                                                fontSize: 12.sp,
-                                              ),
-                                              ),
-                                            ],
-                                          ),
-                                          Column(
-                                            crossAxisAlignment:CrossAxisAlignment.start,
-                                            children:[
-                                              Text('Designation',style: TextStyle(
-                                                fontWeight:FontWeight.bold,
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.black,
-                                                fontSize: 15.sp,
-                                              ),
-                                              ),
-                                              Text('Software Developer',style: TextStyle(
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.black,
-                                                fontSize: 12.sp,
-                                              ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    // Padding(
-                                    //   padding:  EdgeInsets.only(left:10.w,top:20.h),
-                                    //   child:Row(
-                                    //     mainAxisAlignment:MainAxisAlignment.spaceAround,
-                                    //     children:[
-                                    //       Column(
-                                    //         crossAxisAlignment:CrossAxisAlignment.start,
-                                    //         children:[
-                                    //           Text('CTC',style: TextStyle(
-                                    //             fontWeight:FontWeight.bold,
-                                    //             fontFamily: 'Gilroy',
-                                    //             color: Colors.black,
-                                    //             fontSize: 15.sp,
-                                    //           ),
-                                    //           ),
-                                    //           Text('8L',style: TextStyle(
-                                    //             fontFamily: 'Gilroy',
-                                    //             color: Colors.black,
-                                    //             fontSize: 12.sp,
-                                    //           ),
-                                    //           ),
-                                    //         ],
-                                    //       ),
-                                    //       Column(
-                                    //         crossAxisAlignment:CrossAxisAlignment.start,
-                                    //         children:[
-                                    //           Text('Reporting Manager',style: TextStyle(
-                                    //             fontWeight:FontWeight.bold,
-                                    //             fontFamily: 'Gilroy',
-                                    //             color: Colors.black,
-                                    //             fontSize: 15.sp,
-                                    //           ),
-                                    //           ),
-                                    //           Text('Mahesh',style: TextStyle(
-                                    //             fontFamily: 'Gilroy',
-                                    //             color: Colors.black,
-                                    //             fontSize: 12.sp,
-                                    //           ),
-                                    //           ),
-                                    //         ],
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // ),
-                                    Padding(padding:EdgeInsets.only(left:180.w,top:40.h,right:10.w),
-                                      child: InkWell(
-                                        onTap: () async {
-
-                                        },
-                                        borderRadius: BorderRadius.circular(30.r),
-                                        child: Container(
-                                          width:60.w,
-                                          height:40.h,
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 15.w,
-                                            vertical: 15.h,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color:Colors.red,
-                                            borderRadius: BorderRadius.circular(10.r),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              'Close',
-                                              style: TextStyle(
-                                                fontFamily: 'Gilroy',
-                                                color: Colors.white,
-                                                fontSize: 10.sp,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                            showDialog(context: context, builder: (BuildContext context) => errorDialog);},
-                          icon: Icon(Icons.remove_red_eye_outlined),
+send();
+                          },
+                          icon: Icon(Icons.link,color:Colors.blue,),
                         ),
                       ],
                     ),
-                  ],
                 ),
-              ),
             );
           }, separatorBuilder: (BuildContext context, int index) {
           return Divider(

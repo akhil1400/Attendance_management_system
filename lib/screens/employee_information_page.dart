@@ -3,10 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:project/http_call/get.dart';
 import 'package:project/screens/home_page.dart';
 import 'package:project/screens/hr_module.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../common_widget/bottom_navigation_bar.dart';
 import '../common_widget/bottom_navigation_bar1.dart';
 import '../models/model.dart';
+import '../utils/util.dart';
 
 class EmployeePage extends StatefulWidget {
   const EmployeePage({Key? key}) : super(key: key);
@@ -19,8 +21,15 @@ class _LoginPageState extends State<EmployeePage> {
   bool passwordVisible = false;
   Future<LoginModel>? _login;
 
+  late SharedPreferences prefs;
+  late final times;
+  Future<Null> getSharedPrefs() async {
+    prefs = await SharedPreferences.getInstance();
+
+  }
   @override
   void initState() {
+    getSharedPrefs();
     super.initState();
     passwordVisible = true;
   }
@@ -390,7 +399,8 @@ class _LoginPageState extends State<EmployeePage> {
                                           controller: _controller4,
                                           textAlign: TextAlign.start,
                                           cursorColor: Colors.black,
-                                          style: const TextStyle(
+                                          style:TextStyle(
+                                            fontSize:10.sp,
                                             color: Colors.black,
                                           ),
                                           decoration: InputDecoration(
@@ -994,12 +1004,16 @@ class _LoginPageState extends State<EmployeePage> {
                                   bottom: 10.h),
                               child: InkWell(
                                 onTap: () async {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const BottomNaviagtionBar1()),
-                                  );
+                                  Util.name.add(_controller.text);
+                                  Util.email.add(_controller4.text);
+                                  prefs.setStringList("stringt", Util.name);
+                                  prefs.setStringList("stringta", Util.email);
+                                  if(_controller.text.isEmpty && _controller1.text.isEmpty && _controller2.text.isEmpty && _controller3.text.isEmpty && _controller4.text.isEmpty && _controller5.text.isEmpty && _controller6.text.isEmpty && _controller7.text.isEmpty){
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text('Please Enter all details')),
+                                    );
+                                  }
                                 },
                                 borderRadius: BorderRadius.circular(30.r),
                                 child: Container(

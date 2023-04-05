@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
+import 'logs_page.dart';
+
 class AttendencePage extends StatefulWidget {
   const AttendencePage({Key? key}) : super(key: key);
 
@@ -40,6 +42,7 @@ class _AttendencePageState extends State<AttendencePage> {
         length:4,
         child:Scaffold(
       appBar:AppBar(
+        backgroundColor: Colors.blue[800],
         bottom:TabBar(
           tabs: [
             Tab(text: "Logs",),
@@ -50,7 +53,7 @@ class _AttendencePageState extends State<AttendencePage> {
         centerTitle:true,
         title:Row(
         children:[
-        Text('Attendence', style: TextStyle(
+        Text('Attendance', style: TextStyle(
           fontFamily: 'Gilroy',
           color: Colors.white,
           fontSize: 16.sp,
@@ -64,7 +67,8 @@ class _AttendencePageState extends State<AttendencePage> {
             width: 70.0.w,
             height: 40.0.h,
             activeColor:Colors.cyan,
-            valueFontSize:14.0.sp,
+            activeTextColor:Colors.black,
+            valueFontSize: status==false ? 14.0.sp:12.sp,
             toggleSize: 15.0.r,
             value: status,
             borderRadius: 15.0.r,
@@ -82,8 +86,10 @@ class _AttendencePageState extends State<AttendencePage> {
       ),
     ),
           body:TabBarView(
-
-          )
+            children:[
+             LogsPage(),
+          ],
+          ),
         ),
     );
   }

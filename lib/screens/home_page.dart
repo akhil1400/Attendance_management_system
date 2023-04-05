@@ -62,15 +62,6 @@ class _HomePageState extends State<HomePage> {
     _stopwatch.stop();
   }
 
-  // This function will be called when the user presses the Reset button
-  void _reset() {
-    _stop();
-    _stopwatch.reset();
-
-    // Update the UI
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -224,7 +215,7 @@ class _HomePageState extends State<HomePage> {
                       else if(count==2){
                         _stop();
                         setState(() {
-                          times1=DateFormat.jm().format(now);
+                          times=DateFormat.jm().format(now);
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
@@ -232,7 +223,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                             );
 
-                        Util.EndTime.add(times1);
+                        Util.EndTime.add(times);
                         prefs.setStringList("string145", Util.EndTime);
                       }
                     },

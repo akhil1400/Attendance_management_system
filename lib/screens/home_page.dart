@@ -20,8 +20,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late SharedPreferences prefs;
-  String times=" ";
-  String times1="";
+  late var times;
+  late var times1;
+  late var times3;
+  String d="";
   Future<Null> getSharedPrefs() async {
    prefs = await SharedPreferences.getInstance();
 
@@ -37,8 +39,7 @@ class _HomePageState extends State<HomePage> {
   String _result = "00:00:00";
   int count=0;
   String time="Clock In";
-  DateTime
-  now = new DateTime.now();
+  DateTime now = new DateTime.now();
   DateTime now1=new DateTime.now();
   void _start() {
     // Timer.periodic() will call the callback function every 100 milliseconds
@@ -198,8 +199,9 @@ class _HomePageState extends State<HomePage> {
                       setState(() {
                         count++;
                       });
-                      if(count==1) {
+                      if(count%2!=0) {
                         _start();
+                        DateTime now = new DateTime.now();
                         setState(() {
                           time="Clock Out";
                           times=DateFormat.jm().format(now);
@@ -212,18 +214,25 @@ class _HomePageState extends State<HomePage> {
                         Util.startTime.add(times);
                         prefs.setStringList("string23", Util.startTime);
                       }
-                      else if(count==2){
+                      else if(count%2==0){
                         _stop();
                         setState(() {
-                          times=DateFormat.jm().format(now);
+                          time="Clock In";
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('Clock Out')
-                            ),
-                            );
-
-                        Util.EndTime.add(times);
+                          const SnackBar(
+                              content: Text('Clock Out')
+                          ),
+                        );
+                        DateTime now = new DateTime.now();
+                        setState(() {
+                          d=times.difference(times1);
+                          times1=DateFormat.jm().format(now);
+                        });
+                       // Util.Eff.add(d);
+                        Util.EndTime.add(times1);
+                        Util.Eff.add(d);
+                        prefs.setStringList("string6",Util.Eff);
                         prefs.setStringList("string145", Util.EndTime);
                       }
                     },

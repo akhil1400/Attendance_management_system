@@ -22,10 +22,10 @@ class _LogsPageState extends State<LogsPage> {
   TextEditingController _controller1 = TextEditingController();
   Future<Null> getSharedPrefs() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.clear();
     setState(() {
       Util.startTime = prefs.getStringList("string23")!;
       Util.EndTime = prefs.getStringList("string145")!;
+      Util.Eff=prefs.getStringList("string6")!;
     });
   }
 
@@ -158,7 +158,7 @@ class _LogsPageState extends State<LogsPage> {
             height: 590.h,
             child: ListView.builder(
               scrollDirection: Axis.vertical,
-              itemCount: Util.EndTime.length ?? 0,
+              itemCount: Util.Eff.length ?? 0,
               itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                   onTap: () {},
@@ -301,7 +301,8 @@ class _LogsPageState extends State<LogsPage> {
                                                     labelText:
                                                         "Enter Time Out" //label text of field
                                                     ),
-                                                readOnly:true, //set it true, so that user will not able to edit text
+                                                readOnly:
+                                                    true, //set it true, so that user will not able to edit text
                                                 onTap: () async {
                                                   TimeOfDay? pickedTime =
                                                       await showTimePicker(
@@ -345,12 +346,14 @@ class _LogsPageState extends State<LogsPage> {
                                                     EdgeInsets.only(top: 10.h),
                                                 child: InkWell(
                                                   onTap: () async {
-                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
                                                       const SnackBar(
-                                                          content: Text('Request Submitted')
-                                                      ),
+                                                          content: Text(
+                                                              'Request Submitted')),
                                                     );
-                                                        Navigator.pop(context);
+                                                    Navigator.pop(context);
                                                   },
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -446,7 +449,7 @@ class _LogsPageState extends State<LogsPage> {
                                   color: Colors.grey,
                                 ),
                                 Text(
-                                  'Effective Hours\n\n${'  _' ?? 'empty'}',
+                                  'Effective Hours\n\n${Util.Eff[index] ?? 'empty'}',
                                   style: TextStyle(
                                     color: Colors.black,
                                     fontFamily: 'Gilroy',
